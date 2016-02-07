@@ -1,0 +1,56 @@
+/*
+   Simple +/-/* expression language; 
+   parser evaluates constant expressions on the fly
+*/
+
+package pt.ruiandrade;
+
+import java_cup.runtime.*;
+import pt.ruiandrade.Lexer;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+
+parser code {:
+  protected Lexer lexer;
+:}
+
+/* define how to connect to the scanner! */
+init with {:
+  ComplexSymbolFactory f = new ComplexSymbolFactory();
+  symbolFactory = f;
+  lexer = new Lexer(f,System.in);
+:};
+scan with {: return lexer.next_token(); :};
+
+/* Terminals (tokens returned by the scanner). */
+terminal            SEMI, OR, AND, NOT, XOR, IMPL, EQUIV, LPAREN, RPAREN;
+terminal String VAR;        // our scanner provides numbers as integers
+
+/* Non terminals */
+non terminal            expr_list;
+non terminal Formula    expr;      // used to store evaluated subexpressions
+
+/* Precedences */
+precedence left EQUIV;
+precedence left IMPL;
+precedence left XOR;
+precedence left OR;
+precedence left AND;
+precedence left NOT;
+
+/* The grammar rules */
+expr_list ::= expr_list expr:e SEMI         {: RESULT = e; :}
+            | expr:e SEMI                   {: RESULT = e; :}
+            ;
+            
+expr      ::= expr:e1 OR  expr:e2         {: RESULT = new OrFormula(e1, e2); :}
+             | expr:e1 AND expr:e2        {: RESULT = new AndFormula(e1, e2); :}
+             | expr:e1 XOR expr:e2        {: RESULT = new AndFormula(new OrFormula(e1, e2), new NotFormula(new AndFormula(e1,e2))); :}
+             | expr:e1 IMPL expr:e2       {: RESULT = new OrFormula(new NotFormula(e1), e2); :}
+             | expr:e1 EQUIV expr:e2      {: RESULT = new OrFormula(new AndFormula(e1,e2), new AndFormula(new NotFormula(e1), new NotFormula(e2))); :}
+             | NOT expr:e                 {: RESULT = new NotFormula(e); :}
+             | LPAREN expr:e RPAREN	         {: RESULT = e; :}
+             | VAR:v	                     {: RESULT = new Variable(v); :}
+             ;
+       
