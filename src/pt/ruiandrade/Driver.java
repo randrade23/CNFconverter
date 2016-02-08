@@ -24,9 +24,9 @@ class Driver {
 	
 	public static Formula process (Formula f) {
 		Formula cnf = f;
-    	while (!cnf.toString().equals(distribute(fixNegations(cnf)).toString())) {
-    		//Repeat conversion until the formula is in CNF
-    		cnf = distribute(fixNegations(cnf));
+    	while (!cnf.toString().equals(cleanFormula(distribute(fixNegations(cnf))).toString())) {
+    		//Repeat conversion until the formula is in CNF. Perform cleanup as necessary.
+    		cnf = cleanFormula(distribute(fixNegations(cnf)));
     	}
     	return cnf;
 	}
@@ -89,4 +89,40 @@ class Driver {
 		}
 	}
 	
+	public static Formula cleanFormula (Formula f) { //Removing redundant AND/OR clauses (checking for T or F values only, right now...)
+		if (f instanceof OrFormula) {
+			if (((((OrFormula)f).p) instanceof BoolFormula && ((BoolFormula)(((OrFormula)f).p)).b == true) || ((((OrFormula)f).q) instanceof BoolFormula && ((BoolFormula)(((OrFormula)f).q)).b == true)){
+				return new BoolFormula(true);
+			}
+			else if (((((OrFormula)f).p) instanceof BoolFormula && ((BoolFormula)(((OrFormula)f).p)).b == false)){
+				return cleanFormula(((OrFormula)f).q);
+			}
+			else if (((((OrFormula)f).q) instanceof BoolFormula && ((BoolFormula)(((OrFormula)f).q)).b == false)){
+				return cleanFormula(((OrFormula)f).p);
+			}
+			else {
+				return new AndFormula(cleanFormula(((OrFormula)f).p),cleanFormula(((OrFormula)f).q));
+			}
+		}
+		else if (f instanceof AndFormula) {
+			if (((((AndFormula)f).p) instanceof BoolFormula && ((BoolFormula)(((AndFormula)f).p)).b == false) || ((((AndFormula)f).q) instanceof BoolFormula && ((BoolFormula)(((AndFormula)f).q)).b == false)){
+				return new BoolFormula(false);
+			}
+			else if (((((AndFormula)f).p) instanceof BoolFormula && ((BoolFormula)(((AndFormula)f).p)).b == true)){
+				return cleanFormula(((AndFormula)f).q);
+			}
+			else if (((((AndFormula)f).q) instanceof BoolFormula && ((BoolFormula)(((AndFormula)f).q)).b == true)){
+				return cleanFormula(((AndFormula)f).p);
+			}
+			else {
+				return new AndFormula(cleanFormula(((AndFormula)f).p),cleanFormula(((AndFormula)f).q));
+			}
+		}
+		else if (f instanceof NotFormula) {
+			return new NotFormula (cleanFormula(((NotFormula)f).p));
+		}
+		else { // VAR or CONST
+			return f;
+		}
+	}
 }

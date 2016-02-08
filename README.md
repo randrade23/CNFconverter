@@ -1,6 +1,6 @@
 #CNFconverter
 
-Convert any formula to Conjunctive Normal Form 
+Convert any formula to Conjunctive Normal Form. No simplifications take place (yet).
 
 ##Reference sheet for symbols
 
@@ -34,8 +34,8 @@ CNF: ((((a || (a || b)) && (b || (a || b))) && (((((c || c) || e) || (a || b)) &
 
 ##How this works
 
-Formulas are read and parsed with the help of a CUP spec. The parser translates the expression to the adequate data structure. The only special case is when we have XOR, IMPL or EQUIV - these are automatically converted to AND/OR/NOT equivalent expressions. The expressions are then converted with the help of negation propagation and De Morgan laws. The resulting CNF expression is not simplified in any way (yet).
+Formulas are read and parsed with the help of a CUP spec. The parser translates the expression to the adequate data structure. The only special case is when we have XOR, IMPL or EQUIV - these are automatically converted to AND/OR/NOT equivalent expressions. The expressions are then converted with the help of negation propagation and De Morgan laws. The resulting CNF expression is simplified if it contains TRUE/FALSE values (further optimizations are necessary). 
 
 ##TODO
 
-* Simplify formulas after they are converted (removing redundant clauses and making them shorter)
+* Simplify formulas after they are converted (removing redundant clauses and making them shorter, as you can see in the examples above)
