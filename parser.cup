@@ -7,6 +7,7 @@ package pt.ruiandrade;
 
 import java_cup.runtime.*;
 import pt.ruiandrade.Lexer;
+import pt.ruiandrade.formula.*;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +27,7 @@ scan with {: return lexer.next_token(); :};
 /* Terminals (tokens returned by the scanner). */
 terminal            SEMI, OR, AND, NOT, XOR, IMPL, EQUIV, LPAREN, RPAREN;
 terminal String VAR;        // our scanner provides numbers as integers
+terminal String BOOLCONST;
 
 /* Non terminals */
 non terminal            expr_list;
@@ -51,6 +53,7 @@ expr      ::= expr:e1 OR  expr:e2         {: RESULT = new OrFormula(e1, e2); :}
              | expr:e1 EQUIV expr:e2      {: RESULT = new OrFormula(new AndFormula(e1,e2), new AndFormula(new NotFormula(e1), new NotFormula(e2))); :}
              | NOT expr:e                 {: RESULT = new NotFormula(e); :}
              | LPAREN expr:e RPAREN	         {: RESULT = e; :}
+             | BOOLCONST:c				  {: RESULT = new BoolFormula(Boolean.parseBoolean(c)); :}
              | VAR:v	                     {: RESULT = new Variable(v); :}
              ;
        

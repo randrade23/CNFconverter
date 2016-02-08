@@ -1,18 +1,20 @@
 package pt.ruiandrade;
 
+import pt.ruiandrade.formula.AndFormula;
+import pt.ruiandrade.formula.BoolFormula;
+import pt.ruiandrade.formula.Formula;
+import pt.ruiandrade.formula.NotFormula;
+import pt.ruiandrade.formula.OrFormula;
+
 class Driver {
 
 	public static void main(String[] args) throws Exception {
 		Parser parser = new Parser();
 		//Sidenote: Xor, Impl and Equiv are handled by CUP.
 		Formula f = (Formula) parser.parse().value;
-		//Any expressions after this step are made of AND, OR and NOT only.
+		//Any expressions after this step are made of AND, OR and NOT only, and they may contain constants.
 	    try {
-	    	Formula cnf = convertCNF(f); //Initial conversion
-	    	while (!cnf.toString().equals(convertCNF(cnf).toString())) {
-	    		//Repeat conversion until the formula is in CNF
-	    		cnf = convertCNF(cnf);
-	    	}
+	    	Formula cnf = convertCNF(f);
 	    	System.out.print("CNF: "); cnf.print();
 	    }
 	    catch (Exception e) {
@@ -20,8 +22,17 @@ class Driver {
 	    }
 	}
 	
+	public static Formula process (Formula f) {
+		Formula cnf = f;
+    	while (!cnf.toString().equals(distribute(fixNegations(cnf)).toString())) {
+    		//Repeat conversion until the formula is in CNF
+    		cnf = distribute(fixNegations(cnf));
+    	}
+    	return cnf;
+	}
+	
 	public static Formula convertCNF (Formula f) {
-		return distribute(fixNegations(f));
+		return process(f);
 	}
 		
 	public static Formula fixNegations (Formula f) { //Move negations in (until we have none)
@@ -35,6 +46,9 @@ class Driver {
 			else if (((NotFormula) f).p instanceof OrFormula) { //NOT OR
 				return new AndFormula(fixNegations(new NotFormula(((OrFormula)((NotFormula) f).p).p)), fixNegations(new NotFormula(((OrFormula)((NotFormula) f).p).q)));
 			}
+			else if (((NotFormula)f).p instanceof BoolFormula) { //NOT CONST
+				return new BoolFormula(!((BoolFormula)((NotFormula)f).p).b);
+			}
 			else { //NOT VAR
 				return fixNegations(((NotFormula)f).p);
 			}
@@ -45,7 +59,7 @@ class Driver {
 		else if (f instanceof OrFormula) {
 			return new OrFormula (fixNegations(((OrFormula)f).p), fixNegations(((OrFormula)f).q));
 		}
-		else {
+		else { // VAR or CONST
 			return f;
 		}
 	}
@@ -70,7 +84,7 @@ class Driver {
 		else if (f instanceof NotFormula) {
 			return new NotFormula (distribute(((NotFormula)f).p));
 		}
-		else { // VAR
+		else { // VAR or CONST
 			return f;
 		}
 	}

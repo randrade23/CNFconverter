@@ -10,6 +10,8 @@ Convert any formula to Conjunctive Normal Form
 * - : NOT
 * -> : IMPL
 * <=> : EQUIV
+* true: TRUE
+* false: FALSE
 
 End the formula with a semicolon.
 

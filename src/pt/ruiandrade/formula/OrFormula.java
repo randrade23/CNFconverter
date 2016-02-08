@@ -1,10 +1,10 @@
-package pt.ruiandrade;
+package pt.ruiandrade.formula;
 
 public class OrFormula extends Formula {
-	Formula p; 
-	Formula q;
+	public Formula p; 
+	public Formula q;
 	
-	OrFormula (Formula a, Formula b) {
+	public OrFormula (Formula a, Formula b) {
 		p = a;
 		q = b;
 	}

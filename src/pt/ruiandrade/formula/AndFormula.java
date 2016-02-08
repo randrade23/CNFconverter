@@ -1,10 +1,10 @@
-package pt.ruiandrade;
+package pt.ruiandrade.formula;
 
 public class AndFormula extends Formula  {
-	Formula p; 
-	Formula q;
+	public Formula p; 
+	public Formula q;
 	
-	AndFormula (Formula a, Formula b) {
+	public AndFormula (Formula a, Formula b) {
 		p = a;
 		q = b;
 	}

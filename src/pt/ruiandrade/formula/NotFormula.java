@@ -1,9 +1,9 @@
-package pt.ruiandrade;
+package pt.ruiandrade.formula;
 
 public class NotFormula extends Formula {
-	Formula p;
+	public Formula p;
 	
-	NotFormula (Formula a) {
+	public NotFormula (Formula a) {
 		p = a;
 	}
 	

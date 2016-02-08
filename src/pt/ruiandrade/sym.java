@@ -14,6 +14,7 @@ public interface sym {
   public static final int SEMI = 2;
   public static final int EOF = 0;
   public static final int VAR = 11;
+  public static final int BOOLCONST = 12;
   public static final int IMPL = 7;
   public static final int error = 1;
   public static final int RPAREN = 10;
@@ -32,7 +33,8 @@ public interface sym {
   "EQUIV",
   "LPAREN",
   "RPAREN",
-  "VAR"
+  "VAR",
+  "BOOLCONST"
   };
 }
 

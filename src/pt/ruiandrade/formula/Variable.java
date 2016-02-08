@@ -1,9 +1,9 @@
-package pt.ruiandrade;
+package pt.ruiandrade.formula;
 
 public class Variable extends Formula {
-	String varname;
+	public String varname;
 	
-	Variable (String s) {
+	public Variable (String s) {
 		varname = new String(s);
 	}
 

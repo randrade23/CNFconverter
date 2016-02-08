@@ -58,6 +58,7 @@ import java.util.*;
 
 Newline    = \r | \n | \r\n
 Whitespace = [ \t\f] | {Newline}
+BoolConst = "true" | "false"
 Var = [a-zA-Z]+
 
 /* comments */
@@ -89,6 +90,7 @@ ident = ([:jletter:] | "_" ) ([:jletterdigit:] | [:jletter:] | "_" )*
   "<=>"        { return symbolFactory.newSymbol("EQUIV", EQUIV); }
   "("          { return symbolFactory.newSymbol("LPAREN", LPAREN); }
   ")"          { return symbolFactory.newSymbol("RPAREN", RPAREN); }
+  {BoolConst} { return symbolFactory.newSymbol("BOOLCONST", BOOLCONST, yytext()); }
   {Var}     { if (!varsList.contains(yytext())) {vars++; varsList.add(yytext());} return symbolFactory.newSymbol("VAR", VAR, yytext()); }
 }
 
